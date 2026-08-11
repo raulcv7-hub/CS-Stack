@@ -1,0 +1,35 @@
+---
+title: 06. Assembly Language Mechanics
+description: Binary instruction encodings, memory operand addressing, stack frame ABIs, and privileged traps.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+# 06. Assembly Language Mechanics
+
+This course covers low-level machine execution, instruction set encodings for RISC-V and x86-64, memory displacement addressing, stack frame construction, ABI calling conventions, and privileged ISA trap handling.
+
+## Module Breakdown
+
+<CardGrid>
+  <Card title="01. ISA Instruction Encodings" icon="code">
+    Binary bit-field decoding, immediate value sign extension, non-contiguous bit packing, and load-store isolation.
+    * [Binary Instruction Decoding](/00-digital-hardware-foundations/06-assembly-language-mechanics/01-isa-instruction-encoding-architecture/01-instruction-encoding-formats/01-binary-instruction-format-decoding)
+    * [Immediate Sign Extension](/00-digital-hardware-foundations/06-assembly-language-mechanics/01-isa-instruction-encoding-architecture/01-instruction-encoding-formats/02-immediate-value-sign-extension)
+  </Card>
+  <Card title="02. Memory Operand Addressing" icon="document">
+    Base-displacement addressing, PC-relative data addressing, assembler directives (.text, .data, .bss), and alignment.
+    * [Zero Register Mechanics](/00-digital-hardware-foundations/06-assembly-language-mechanics/02-assembly-operand-addressing-mechanics/01-architectural-register-file-mechanics/01-register-aliasing-zero-register)
+    * [Base-Displacement Addressing](/00-digital-hardware-foundations/06-assembly-language-mechanics/02-assembly-operand-addressing-mechanics/02-assembly-memory-operand-addressing/01-base-displacement-memory-addressing)
+  </Card>
+  <Card title="03. Stack Frame ABI Architecture" icon="layers">
+    Subroutine linkage, caller/callee saved registers, 16-byte stack alignment, and frame pointer unwinding (.cfi).
+    * [Subroutine Linkage Return](/00-digital-hardware-foundations/06-assembly-language-mechanics/03-stack-frame-abi-architecture/01-subroutine-linkage-abi-conventions/01-subroutine-linkage-return-mechanics)
+    * [Caller-Saved Registers](/00-digital-hardware-foundations/06-assembly-language-mechanics/03-stack-frame-abi-architecture/01-subroutine-linkage-abi-conventions/02-caller-saved-register-preservation)
+  </Card>
+  <Card title="04. Control Flow & Privileged Traps" icon="shield">
+    Condition code evaluations, flagless comparisons, jump tables, CSR registers, and trap vector context restoration.
+    * [Unconditional Jump Targets](/00-digital-hardware-foundations/06-assembly-language-mechanics/04-assembly-control-flow-branching/01-conditional-branch-evaluation/01-unconditional-jump-target-calculation)
+    * [Exception Trap Vector Architecture](/00-digital-hardware-foundations/06-assembly-language-mechanics/05-privileged-isa-trap-architecture/02-hardware-trap-vector-execution/01-exception-trap-vector-architecture)
+  </Card>
+</CardGrid>

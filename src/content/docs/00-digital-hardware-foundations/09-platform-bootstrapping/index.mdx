@@ -1,0 +1,35 @@
+---
+title: 09. Platform Bootstrapping Architecture
+description: Power-On Reset, Boot ROM, Root of Trust, DRAM PHY calibration, SMP core wakeup, and ACPI/FDT tables.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+# 09. Platform Bootstrapping Architecture
+
+This course covers initial hardware bring-up from Power-On Reset (POR) through Root of Trust verification, Cache-as-RAM staging, DRAM PHY training, multi-core SMP parking/wakeup, PCIe enumeration, and kernel handoff contracts.
+
+## Module Breakdown
+
+<CardGrid>
+  <Card title="01. Power-On Reset & Root of Trust" icon="power">
+    POR state machines, Boot ROM execution, Cache-as-RAM (CAR), eFuse public key verification, and TPM measured boot.
+    * [Power-On Reset State Machine](/00-digital-hardware-foundations/09-platform-bootstrapping/01-power-on-reset-execution/01-power-on-reset-sequence/01-power-on-reset-state-machine)
+    * [Immutable Boot ROM Verification](/00-digital-hardware-foundations/09-platform-bootstrapping/01-power-on-reset-execution/02-hardware-root-of-trust/01-immutable-boot-rom-verification)
+  </Card>
+  <Card title="02. DRAM Controller Calibration" icon="setting">
+    I2C SPD EEPROM timing parsing, DDR write leveling, Data Eye Vref training, and CAR-to-DRAM context migration.
+    * [I2C SPD EEPROM Parsing](/00-digital-hardware-foundations/09-platform-bootstrapping/02-dram-memory-calibration/01-dram-spd-discovery/01-i2c-spd-eeprom-parsing)
+    * [DRAM Write Leveling](/00-digital-hardware-foundations/09-platform-bootstrapping/02-dram-memory-calibration/02-dram-phy-training/01-dram-write-leveling-calibration)
+  </Card>
+  <Card title="03. Multi-Core SMP & Bus Enumeration" icon="random">
+    BSP selection, AP core parking, INIT-SIPI wakeup, recursive PCIe bus tree scanning, and BAR allocation.
+    * [Bootstrap Processor Selection](/00-digital-hardware-foundations/09-platform-bootstrapping/03-multi-core-smp-initialization/01-smp-core-parking-architecture/01-bootstrap-processor-selection)
+    * [PCIe Recursive Bus Enumeration](/00-digital-hardware-foundations/09-platform-bootstrapping/04-platform-bus-enumeration/01-pcie-bus-tree-scanning/01-pcie-recursive-bus-enumeration)
+  </Card>
+  <Card title="04. Firmware Isolation & Kernel Handoff" icon="shield">
+    ACPI MADT/SRAT table generation, DeviceTree (DTB), SMM SMRAM locking, ARM TrustZone, and 64-bit long mode entry.
+    * [ACPI Table Structure Synthesis](/00-digital-hardware-foundations/09-platform-bootstrapping/04-platform-bus-enumeration/02-system-description-tables/01-acpi-table-structure-synthesis)
+    * [SMM SMRAM Isolation](/00-digital-hardware-foundations/09-platform-bootstrapping/05-firmware-security-isolation/01-system-management-mode/01-smm-smram-isolation-setup)
+  </Card>
+</CardGrid>

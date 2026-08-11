@@ -1,0 +1,29 @@
+{
+  "name": "computer-engineering-platform",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "predev": "node scripts/fix-frontmatter.mjs",
+    "prebuild": "node scripts/fix-frontmatter.mjs",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint": "biome check .",
+    "format": "biome format --write ."
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.32.0",
+    "astro": "^5.0.0",
+    "katex": "^0.16.21",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/katex": "^0.16.7",
+    "typescript": "^5.7.3"
+  }
+}

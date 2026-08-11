@@ -1,0 +1,221 @@
+@import 'katex/dist/katex.min.css';
+
+:root {
+  --sl-font-mono: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
+  --sl-color-bg: #0b0f19;
+  --sl-color-bg-nav: #111827;
+  --sl-color-bg-sidebar: #0f172a;
+  --sl-color-accent: #38bdf8;
+  --sl-color-accent-high: #f59e0b;
+  --sl-color-text: #e2e8f0;
+  --sl-color-text-accent: #38bdf8;
+}
+
+#reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #38bdf8, #f59e0b);
+  width: 0%;
+  z-index: 9999;
+  transition: width 0.1s ease-out;
+}
+
+.main-frame {
+  max-width: 100% !important;
+}
+
+.main-pane {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 2.5rem;
+}
+
+.sl-markdown-content {
+  max-width: 82ch !important;
+  margin: 0 auto;
+}
+
+.right-sidebar {
+  position: sticky;
+  top: 5rem;
+  height: calc(100vh - 6rem);
+  overflow-y: auto;
+  border-left: 1px solid #1e293b;
+  padding-left: 1.25rem;
+}
+
+pre,
+code {
+  font-family: var(--sl-font-mono) !important;
+}
+
+.expressive-code pre:has(code[data-language="text"]),
+.expressive-code pre:has(code[data-language="txt"]),
+pre[data-language="text"],
+pre[data-language="txt"],
+code[data-language="text"],
+code[data-language="txt"] {
+  line-height: 1.0 !important;
+  font-size: 0.85rem !important;
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sl-markdown-content table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reading-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 9999px;
+  font-size: 0.825rem;
+  color: #94a3b8;
+  margin-bottom: 1.5rem;
+}
+
+.initial-toc-card {
+  background: #161e2e;
+  border: 1px solid #1e293b;
+  border-left: 4px solid #38bdf8;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.initial-toc-header {
+  font-weight: 600;
+  color: #f8fafc;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.initial-toc-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.5rem 1rem;
+  margin: 0 !important;
+  padding-left: 1.25rem !important;
+  font-size: 0.875rem;
+}
+
+.initial-toc-list a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+.initial-toc-list a:hover {
+  text-decoration: underline;
+}
+
+.global-collapse-controls {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.qol-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  padding: 0.4rem 0.85rem;
+  border-radius: 0.375rem;
+  font-size: 0.825rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.qol-btn:hover {
+  background: #334155;
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.collapsible-h2-section {
+  margin-top: 2rem;
+}
+
+.collapsible-h2-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 0.35rem;
+}
+
+.collapsible-h2-header h2 {
+  margin: 0 !important;
+  border: none !important;
+}
+
+.h2-toggle-icon {
+  font-size: 0.75rem;
+  color: #38bdf8;
+  transition: transform 0.2s ease;
+}
+
+.collapsible-h2-section.is-collapsed .h2-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+.collapsible-h2-section.is-collapsed .collapsible-h2-body {
+  display: none;
+}
+
+.solved-exercise-accordion {
+  background: #161e2e;
+  border: 1px solid #f59e0b;
+  border-radius: 0.5rem;
+  margin: 2.5rem 0;
+  overflow: hidden;
+}
+
+.solved-exercise-summary {
+  background: #1e293b;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  color: #fbbf24;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.accordion-badge {
+  font-size: 0.75rem;
+  background: #f59e0b22;
+  color: #f59e0b;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #f59e0b44;
+}
+
+.solved-exercise-content {
+  padding: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+  .main-pane {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .right-sidebar {
+    display: none;
+  }
+}

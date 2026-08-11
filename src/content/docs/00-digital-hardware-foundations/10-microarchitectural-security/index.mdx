@@ -1,0 +1,35 @@
+---
+title: 10. Microarchitectural Security Architecture
+description: Cache side-channels, transient execution vulnerabilities (Spectre, Meltdown, LVI), Rowhammer, and TEEs.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+# 10. Microarchitectural Security Architecture
+
+This course examines hardware-level vulnerabilities and silicon mitigations, analyzing cache side-channels, transient speculative execution exploits, physical Rowhammer disturbance, hardware fault injection, and Trusted Execution Environments.
+
+## Module Breakdown
+
+<CardGrid>
+  <Card title="01. Cache & Execution Side-Channels" icon="magnifier">
+    Flush+Reload, Prime+Probe, Evict+Time, SMT execution port contention, and Hertzbleed frequency leakage.
+    * [Cache Timing Leakage Foundations](/00-digital-hardware-foundations/10-microarchitectural-security/01-cache-side-channel-attacks/01-timing-side-channels/01-cache-timing-leakage-foundations)
+    * [Flush+Reload Attack Mechanics](/00-digital-hardware-foundations/10-microarchitectural-security/01-cache-side-channel-attacks/01-timing-side-channels/02-flush-reload-attack-mechanics)
+  </Card>
+  <Card title="02. Transient Execution Vulnerabilities" icon="warning">
+    Spectre (v1, v2, v4, Retbleed, BHI, SLS), Meltdown, Foreshadow (L1TF), MDS buffer sampling, LVI, and Downfall.
+    * [Branch Speculation Side-Channels](/00-digital-hardware-foundations/10-microarchitectural-security/02-transient-execution-vulnerabilities/01-speculative-branch-attacks/01-branch-speculation-side-channel-leakage)
+    * [Spectre Variant 1 Bounds Check](/00-digital-hardware-foundations/10-microarchitectural-security/02-transient-execution-vulnerabilities/01-speculative-branch-attacks/02-spectre-variant-1-bounds-check-bypass)
+  </Card>
+  <Card title="03. Physical Attacks & Hardware TEEs" icon="shield">
+    DDR4/DDR5 Rowhammer disturbance, PRAC counters, clock/voltage glitching, ARM TrustZone, Intel SGX/TDX, and SEV-SNP.
+    * [DRAM Rowhammer Disturbance](/00-digital-hardware-foundations/10-microarchitectural-security/03-physical-microarchitectural-attacks/01-dram-rowhammer-mechanics/01-dram-adjacent-row-activation-disturbance)
+    * [ARM TrustZone World Partitioning](/00-digital-hardware-foundations/10-microarchitectural-security/04-hardware-trusted-execution-environments/01-hardware-security-enclaves/01-arm-trustzone-hardware-world-partitioning)
+  </Card>
+  <Card title="04. Microarchitectural Hardware Mitigations" icon="setting">
+    Speculation barriers (CSDB/LFENCE), buffer flushing (MD_CLEAR), IBRS/IBPB, randomized caches, and PAC/CET.
+    * [Speculative Execution Barriers](/00-digital-hardware-foundations/10-microarchitectural-security/05-microarchitectural-hardware-mitigations/01-hardware-speculation-barriers/01-speculative-execution-barriers)
+    * [Constant-Time Hardware Execution](/00-digital-hardware-foundations/10-microarchitectural-security/05-microarchitectural-hardware-mitigations/02-hardware-cache-partitioning-architectures/01-constant-time-hardware-execution)
+  </Card>
+</CardGrid>
