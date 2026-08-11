@@ -1,55 +1,213 @@
 <div id="reading-progress-bar"></div>
 
 <script>
-  function initEnhancements() {
-    const content = document.querySelector('.sl-markdown-content');
-    if (!content) return;
+  const STORAGE_KEY = "cs_stack_completed_lessons";
 
-    if (!document.getElementById('reading-progress-bar')) {
-      const progressBar = document.createElement('div');
-      progressBar.id = 'reading-progress-bar';
-      document.body.appendChild(progressBar);
+  function getCompletedLessons() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    } catch {
+      return [];
     }
+  }
 
-    window.addEventListener('scroll', () => {
-      const bar = document.getElementById('reading-progress-bar');
-      if (!bar) return;
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
-      bar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+  function toggleLessonCompletion(url) {
+    const list = getCompletedLessons();
+    const cleanUrl = url.replace(/\/$/, "");
+    const index = list.indexOf(cleanUrl);
+    if (index === -1) {
+      list.push(cleanUrl);
+    } else {
+      list.splice(index, 1);
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    updateSidebarProgress();
+    updateCompletionButton();
+  }
+
+  function updateSidebarProgress() {
+    const completed = getCompletedLessons();
+    const sidebar = document.querySelector(".sidebar-content");
+    if (!sidebar) return;
+
+    const links = Array.from(sidebar.querySelectorAll("a[href]"));
+    links.forEach((a) => {
+      const href = a.getAttribute("href")?.replace(/\/$/, "") || "";
+      const isCompleted = completed.includes(href);
+      let badge = a.querySelector(".lesson-check-badge");
+
+      if (isCompleted) {
+        if (!badge) {
+          badge = document.createElement("span");
+          badge.className = "lesson-check-badge";
+          badge.textContent = "✓";
+          a.appendChild(badge);
+        }
+      } else if (badge) {
+        badge.remove();
+      }
     });
 
-    if (!document.querySelector('.reading-meta-badge')) {
-      const text = content.textContent || '';
+    const groups = Array.from(
+      sidebar.querySelectorAll("details, .sidebar-group"),
+    );
+    groups.forEach((group) => {
+      const groupLinks = Array.from(group.querySelectorAll("a[href]"));
+      if (groupLinks.length === 0) return;
+
+      const total = groupLinks.length;
+      const done = groupLinks.filter((a) => {
+        const href = a.getAttribute("href")?.replace(/\/$/, "") || "";
+        return completed.includes(href);
+      }).length;
+
+      const summary = group.querySelector("summary, .group-label");
+      if (!summary) return;
+
+      let badge = summary.querySelector(".group-progress-badge");
+      if (!badge) {
+        badge = document.createElement("span");
+        badge.className = "group-progress-badge";
+        summary.appendChild(badge);
+      }
+
+      if (done === total) {
+        badge.textContent = "✓ 100%";
+        badge.className = "group-progress-badge is-complete";
+      } else if (done > 0) {
+        const pct = Math.round((done / total) * 100);
+        badge.textContent = `${pct}%`;
+        badge.className = "group-progress-badge is-in-progress";
+      } else {
+        badge.textContent = "";
+        badge.className = "group-progress-badge";
+      }
+    });
+  }
+
+  function updateCompletionButton() {
+    const btn = document.getElementById("btn-toggle-complete");
+    if (!btn) return;
+    const currentUrl = window.location.pathname.replace(/\/$/, "");
+    const isCompleted = getCompletedLessons().includes(currentUrl);
+
+    if (isCompleted) {
+      btn.innerHTML = "<span>✓</span> Lesson Completed (Click to Reset)";
+      btn.classList.add("is-completed");
+    } else {
+      btn.innerHTML = "<span>○</span> Mark Lesson as Completed";
+      btn.classList.remove("is-completed");
+    }
+  }
+
+  function initHeaderSidebarToggle() {
+    const isSplash =
+      document.body.dataset.template === "splash" ||
+      document.querySelector(".hero") !== null;
+    if (isSplash) return;
+
+    const header = document.querySelector(".header, starlight-header");
+    if (!header || document.getElementById("btn-toggle-sidebar")) return;
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.id = "btn-toggle-sidebar";
+    toggleBtn.className = "sidebar-toggle-header-btn";
+    toggleBtn.innerHTML = "☰ <span>Sidebar</span>";
+    toggleBtn.title = "Toggle Sidebar Visibility";
+
+    toggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("sidebar-collapsed-custom");
+    });
+
+    header.prepend(toggleBtn);
+  }
+
+  function initEnhancements() {
+    const isSplash =
+      document.body.dataset.template === "splash" ||
+      document.querySelector(".hero") !== null;
+    if (isSplash) return;
+
+    const content = document.querySelector(".sl-markdown-content");
+    if (!content) return;
+
+    initHeaderSidebarToggle();
+    updateSidebarProgress();
+
+    const pathname = window.location.pathname.replace(/\/$/, "");
+    const isTocPage = pathname.endsWith("/toc");
+
+    if (isTocPage && !document.querySelector(".toc-welcome-banner")) {
+      const banner = document.createElement("div");
+      banner.className = "toc-welcome-banner";
+      banner.innerHTML =
+        "<span>💡</span> <div><strong>Course Syllabus & Architecture Map</strong> — Use the left sidebar to navigate directly into any lesson of this course.</div>";
+      const h1 = content.querySelector("h1");
+      if (h1) h1.after(banner);
+      return;
+    }
+
+    if (isTocPage) return;
+
+    const updateProgress = () => {
+      const bar = document.getElementById("reading-progress-bar");
+      if (!bar) return;
+      const totalHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress =
+        totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+      bar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    };
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+
+    if (!document.querySelector(".reading-meta-badge")) {
+      const text = content.textContent || "";
       const wordCount = text.trim().split(/\s+/).length;
       const readingTime = Math.ceil(wordCount / 200);
 
-      const metaBadge = document.createElement('div');
-      metaBadge.className = 'reading-meta-badge';
+      const metaBadge = document.createElement("div");
+      metaBadge.className = "reading-meta-badge";
       metaBadge.innerHTML = `<span>⏱️ ${readingTime} min read</span><span>•</span><span>📊 ${wordCount.toLocaleString()} words</span>`;
 
-      const titleHeader = content.querySelector('h1');
-      if (titleHeader) {
-        titleHeader.after(metaBadge);
-      }
+      const titleHeader = content.querySelector("h1");
+      if (titleHeader) titleHeader.after(metaBadge);
     }
 
-    const h2Elements = Array.from(content.querySelectorAll('h2'));
+    if (!document.getElementById("btn-toggle-complete")) {
+      const completeContainer = document.createElement("div");
+      completeContainer.className = "lesson-complete-container";
+      completeContainer.innerHTML =
+        '<button id="btn-toggle-complete" class="mark-completed-btn"><span>○</span> Mark Lesson as Completed</button>';
+      content.appendChild(completeContainer);
+
+      document
+        .getElementById("btn-toggle-complete")
+        ?.addEventListener("click", () => {
+          toggleLessonCompletion(window.location.pathname);
+        });
+      updateCompletionButton();
+    }
+
+    const h2Elements = Array.from(content.querySelectorAll("h2"));
 
     if (h2Elements.length >= 2) {
       const exerciseH2 = h2Elements[h2Elements.length - 2];
+      if (
+        exerciseH2 &&
+        !exerciseH2.parentElement?.classList.contains("solved-exercise-summary")
+      ) {
+        const details = document.createElement("details");
+        details.className = "solved-exercise-accordion";
 
-      if (exerciseH2 && !exerciseH2.parentElement?.classList.contains('solved-exercise-summary')) {
-        const details = document.createElement('details');
-        details.className = 'solved-exercise-accordion';
-
-        const summary = document.createElement('summary');
-        summary.className = 'solved-exercise-summary';
-        const originalTitle = exerciseH2.textContent || 'Exercise Solution';
+        const summary = document.createElement("summary");
+        summary.className = "solved-exercise-summary";
+        const originalTitle = exerciseH2.textContent || "Exercise Solution";
         summary.innerHTML = `<span>💡 ${originalTitle}</span><span class="accordion-badge">Click to Expand Solution</span>`;
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'solved-exercise-content';
+        const wrapper = document.createElement("div");
+        wrapper.className = "solved-exercise-content";
 
         let curr = exerciseH2.nextElementSibling;
         const nodesToMove = [];
@@ -66,80 +224,42 @@
         nodesToMove.forEach((node) => wrapper.appendChild(node));
       }
     }
-    
-    if (h2Elements.length > 1 && !document.querySelector('.initial-toc-card')) {
-      const overviewCard = document.createElement('div');
-      overviewCard.className = 'initial-toc-card';
-
-      let tocListHTML = '<div class="initial-toc-header"><span>📋 Lesson Topics Overview</span></div><ul class="initial-toc-list">';
-      h2Elements.forEach((h2, index) => {
-        if (!h2.id) {
-          h2.id = `section-h2-${index}`;
-        }
-        tocListHTML += `<li><a href="#${h2.id}">${h2.textContent?.replace(/^#+\s*/, '')}</a></li>`;
-      });
-      tocListHTML += '</ul>';
-
-      overviewCard.innerHTML = tocListHTML;
-
-      const metaBadge = content.querySelector('.reading-meta-badge');
-      if (metaBadge) {
-        metaBadge.after(overviewCard);
-      } else {
-        const titleHeader = content.querySelector('h1');
-        if (titleHeader) titleHeader.after(overviewCard);
-      }
-    }
-
-    if (h2Elements.length > 0 && !document.querySelector('.global-collapse-controls')) {
-      const controlsDiv = document.createElement('div');
-      controlsDiv.className = 'global-collapse-controls';
-      controlsDiv.innerHTML = `
-        <button id="btn-expand-all" class="qol-btn">📖 Expand All Sections</button>
-        <button id="btn-collapse-all" class="qol-btn">📕 Collapse All Sections</button>
-      `;
-
-      const initialToc = content.querySelector('.initial-toc-card');
-      if (initialToc) {
-        initialToc.after(controlsDiv);
-      }
-
-      document.getElementById('btn-expand-all')?.addEventListener('click', () => {
-        document.querySelectorAll('.collapsible-h2-section').forEach((sec) => sec.classList.remove('is-collapsed'));
-      });
-
-      document.getElementById('btn-collapse-all')?.addEventListener('click', () => {
-        document.querySelectorAll('.collapsible-h2-section').forEach((sec) => sec.classList.add('is-collapsed'));
-      });
-    }
 
     h2Elements.forEach((h2, idx) => {
       if (idx === h2Elements.length - 2) return;
-      if (h2.parentElement?.classList.contains('collapsible-h2-header')) return;
+      if (h2.parentElement?.classList.contains("collapsible-h2-header")) return;
 
-      const sectionWrapper = document.createElement('div');
-      sectionWrapper.className = 'collapsible-h2-section';
+      const sectionWrapper = document.createElement("div");
+      sectionWrapper.className = "collapsible-h2-section";
+      if (idx > 0) {
+        sectionWrapper.classList.add("is-collapsed");
+      }
 
-      const headerWrapper = document.createElement('div');
-      headerWrapper.className = 'collapsible-h2-header';
-      
-      const toggleIcon = document.createElement('span');
-      toggleIcon.className = 'h2-toggle-icon';
-      toggleIcon.textContent = '▼';
+      const headerWrapper = document.createElement("div");
+      headerWrapper.className = "collapsible-h2-header";
+
+      const toggleIcon = document.createElement("span");
+      toggleIcon.className = "h2-toggle-icon";
+      toggleIcon.textContent = "▼";
 
       h2.before(sectionWrapper);
       headerWrapper.appendChild(toggleIcon);
       headerWrapper.appendChild(h2);
       sectionWrapper.appendChild(headerWrapper);
 
-      const bodyWrapper = document.createElement('div');
-      bodyWrapper.className = 'collapsible-h2-body';
+      const bodyWrapper = document.createElement("div");
+      bodyWrapper.className = "collapsible-h2-body";
 
       let curr = sectionWrapper.nextElementSibling;
       const nodesToMove = [];
-      const stopTarget = idx < h2Elements.length - 2 ? h2Elements[idx + 1] : null;
+      const stopTarget =
+        idx < h2Elements.length - 2 ? h2Elements[idx + 1] : null;
 
-      while (curr && curr !== stopTarget && !curr.classList.contains('solved-exercise-accordion')) {
+      while (
+        curr &&
+        curr !== stopTarget &&
+        !curr.classList.contains("solved-exercise-accordion")
+      ) {
         nodesToMove.push(curr);
         curr = curr.nextElementSibling;
       }
@@ -147,12 +267,12 @@
       nodesToMove.forEach((node) => bodyWrapper.appendChild(node));
       sectionWrapper.appendChild(bodyWrapper);
 
-      headerWrapper.addEventListener('click', () => {
-        sectionWrapper.classList.toggle('is-collapsed');
+      headerWrapper.addEventListener("click", () => {
+        sectionWrapper.classList.toggle("is-collapsed");
       });
     });
   }
 
-  document.addEventListener('DOMContentLoaded', initEnhancements);
-  document.addEventListener('astro:page-load', initEnhancements);
+  document.addEventListener("DOMContentLoaded", initEnhancements);
+  document.addEventListener("astro:page-load", initEnhancements);
 </script>
